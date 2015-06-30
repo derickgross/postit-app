@@ -5,6 +5,12 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :logged_in?
 
+  def login_user!(user)
+    session[:user_id] = user.id
+    flash["notice"] = "Welcome, you have logged in."
+    redirect_to root_path
+  end
+
   def current_user
   	@current_user ||= User.find(session[:user_id]) if session[:user_id]
   end
@@ -20,5 +26,14 @@ class ApplicationController < ActionController::Base
   	else
 
   	end
+  end
+
+  def require_admin
+    access_denied unless logged_in? && current_user.admin?
+  end
+
+  def access_denied
+    flash[:error] = "You can't do that."
+    redirect_to root_path
   end
 end

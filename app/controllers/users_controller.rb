@@ -34,15 +34,15 @@ class UsersController < ApplicationController
 	private
 
 	def user_params
-		params.require(:user).permit(:username, :password)
+		params.require(:user).permit(:username, :password, :time_zone, :phone_number)
 	end
 
 	def set_user
-		@user = User.find(params[:id])
+		@user = User.find_by slug: (params[:id])
 	end
 
 	def require_same_user
-		if current_user != user
+		if current_user != @user
 			flash[:error] = "You're not allowed to do that.'"
 		end
 	end
